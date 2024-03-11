@@ -1,0 +1,118 @@
+Program name: SDE_quark
+Version: 1.0
+Copyright (c) 2024 UChicago Argonne, LLC
+All Rights Reserved
+By: Argonne National Laboratory
+SDE_quark is released under the GNU General Public License version 3 (GPLv3).
+
+Contact: Shaoyang Jia, syjia@anl.gov
+Physics Division, Argonne National Laboratory,
+9700 South Cass Avenue Lemont, Illinois 60439, USA.
+
+Program description:
+SDE_quark solves the Schwinger-Dyson equation for the quark propagator
+in the rainbow-ladder truncation with the application of the Maris-Tandy
+model. It also provide fixed-grid routines to compute the quark propagator
+with complex-valued momentum.
+
+Source files:
+name                      type              description
+/                         directory         main directory
+ sde_pmts_io.h            C++ class         defines "SDE_PMTS_IO"
+ README                   documentation     main documentation of this program
+ main_sde_pmts_io.cpp     C++ function      generate binary file for model parameters
+ main_sde_iter.cpp        C++ function      main function for the iterative solver
+ main_complex_prop.cpp    C++ function      main function that applies fixed-grid \
+  quadrature for the quark propagator with complex-valued momentum
+ filenames_complex_prop.h C++ header        names of files for classes in fixed \
+  grid algorithm
+ COPYING                  documentation     GNU General Public License statement
+ consts.h                 C++ header        definitions of constants
+ CMakeLists.txt           CMake list        build instructions for CMake
+ bind_sde_ker.cpp         C++ pybind11      definition of a pybind11 module for \
+  the kernel functions of integrals in the quark self-energy
+ bind_sde.cpp             C++ pybind11      definition of a pybind11 module for \
+  the iterative solver of the Euclidean-space SDE
+ bind_ker.cpp             C++ pybind11      definition of a pybind11 module for \
+  the fixed-grid computation of the quark propagator
+
+/source_utility/          directory         quadrature methods, interpolation, \
+  and tolerance tests
+ quad_gk.h                C++ class         adaptive Gauss-Kronrod quadrature
+ gc_grid.h                C++ class         grid applying Gauss-Chebyshev \
+  quadrature rules
+ gh_rw.h                  C++ class         51-point Gauss-Hermite quadrature \
+  roots and weights
+ quad_gch.h               C++ class         fixed-grid Gauss-Chebyshev quadrature
+  for symmetric functions
+ quad_gc.h                C++ class         fixed-grid Gauss-Chebyshev quadrature
+ itp_1d.h                 C++ class         linear interpolator of a single variable
+ quad_trapz.h             C++ class         fixed-grid trapezoidal quadrature
+ gc_rw.h                  C++ class         Gauss-Chebyshev roots and weights
+ tol_test.h               C++ class         tolerance tests
+ quad_gh.h                C++ class         fixed-grid Gauss-Hermite quadrature
+ gk_rw.h                  C++ class         Gauss-Kronrod roots and weights
+
+/source_sde_quark/        directory         propagator with complex momentum and
+  iterative solver
+ complex_prop.h           C++ class         quark propagator with fixed-grid \
+  quadrature rules
+ natural_cubic_spline.h   C++ class         interpolator applying natural cubic \
+  splines
+ quark_prop.h             C++ class         quark propagator in the Euclidean space
+ rvt.h                    C++ class         radial variable transformation
+ sde_ker.h                C++ class         symmetric kernel functions of the \
+  quark self-energy not including the quark propagator
+ sde_ker_z_itg.h          C++ class         angular integrations of the quark \
+  self-energy with adaptive quadrature
+ sde_quark.h              C++ class         main class for the iterative solver \
+  of the SDE
+ sde_quark_iter.h         C++ class         kernel and iteration of the iterative \
+  solver
+ sde_quark_ker.h          C++ class         symmetric kernel functions of the \
+  quark self-energy including the quark propagator
+ sde_quark_prop.h         C++ class         fixed-grid quadratures for the quark \
+  self-energy with asymptotics treated separately
+ sde_quark_prop_ker_asymp.h C++ class       asymptotics for the radial integrals \
+  of the quark self-energy
+ sde_quark_prop_ker_asymp_elem.h C++ class  elementary blocks for the asymptotic \
+  behavior of the quark self-energy
+ sde_solution.h           C++ class         data types for the Euclidean-space \
+  solution of the SDE
+ sf.h                     C++ class         class for the Euclidean-space solution \
+  of the SDE applying radial variable transform and Gauss-Chebyshev grid
+ var_tran_pf_z.h          C++ class         profile for the angular variable transform
+
+/source_gker/             directory         gluon propagator
+ g_mt.h                   C++ class         Maris-Tandy model dressing function
+
+/python/                  directory         accuracy and performance tests
+ test_sf_compiled.py      python script     main script of the tests
+ tfc.py                   python script     supporting functions
+
+Dependencies:
+	package name           recommended version   note
+	g++                    11.4.0+               C++ compiler
+	CMake                  3.22.1+               build system
+	GNU Scientific Library 2.7.1+                natural cubic spline
+	OpenMP                 4.5+                  multiprocessing
+	python                 3.11.3+               for accuracy test only
+	numpy                  1.24.3+               for accuracy test only
+	pybind11               2.10.4+               for accuracy test only
+
+Installation procedures:
+	(1) Extract source files in "SDE_quark.zip" into the folder named "SDE_quark".
+	(2) If compiled modules for Python are to be generated by Pybind11, ensure that
+  the current Python working environment contains the support for Pybind11 through for
+  example Anaconda. Otherwise modify "set(is_pybind TRUE)" in "CMakeLists.txt" to
+  "set(is_pybind FALSE)".
+	(3) Run "bash compile_SDE_quark.sh" in the command line. Executables named
+  "main_complex_prop", "main_sde_iter", and "main_sde_pmts" should be created.
+
+Execution:
+	(1) Run "./main_sde_pmts" to save the model parameters in a binary file.
+	(2) Run "./main_sde_iter" for the iterative solver of the SDE to obtain the
+    Euclidean-space solution.
+	(3) Run "./main_complex_prop" to test the computation of the inverse quark
+    propagator with complex-valued momenta.
+	(4) Run "python3 test_sf_compiled.py" for the accuracy and performance tests.
